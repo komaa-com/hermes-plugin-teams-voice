@@ -137,7 +137,7 @@ plugins:
         share_point_site_id: ${TEAMS_SHAREPOINT_SITE_ID}
         realtime:
           backend: azure
-          azure_endpoint: https://pcfcaoai2.cognitiveservices.azure.com
+          azure_endpoint: https://<your-azure-resource>.cognitiveservices.azure.com
           azure_deployment: gpt-realtime
           azure_api_version: 2025-04-01-preview
           voice: cedar
@@ -159,7 +159,7 @@ TEAMS_SHAREPOINT_SITE_ID=contoso.sharepoint.com,<siteGuid>,<webGuid>
 TEAMS_VOICE_HOST=127.0.0.1
 TEAMS_VOICE_PORT=8443
 TEAMS_VOICE_REALTIME_BACKEND=azure
-TEAMS_VOICE_AZURE_ENDPOINT=https://pcfcaoai2.cognitiveservices.azure.com
+TEAMS_VOICE_AZURE_ENDPOINT=https://<your-azure-resource>.cognitiveservices.azure.com
 TEAMS_VOICE_AZURE_DEPLOYMENT=gpt-realtime
 TEAMS_VOICE_AZURE_API_VERSION=2025-04-01-preview
 TEAMS_VOICE_REALTIME_VOICE=cedar

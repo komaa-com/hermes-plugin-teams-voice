@@ -5,68 +5,66 @@ packaged as a standalone, pip-installable plugin — install it *on top of* a no
 Hermes install, no fork required.
 
 The plugin (name **`teams_voice`**) hosts the HMAC-authenticated WebSocket bridge that
-the companion Windows/.NET media worker dials into, and drives the call: realtime
-(OpenAI/Azure speech-to-speech) **or** streaming (STT→agent→TTS), camera/screen vision,
-the avatar driver cues (expression / visemes / show-to-caller), group-call etiquette,
-DTMF, bilingual EN/AR, meeting recap/minutes, and SharePoint (OneDrive) file send.
+a media worker dials into, and drives the call: realtime (OpenAI/Azure
+speech-to-speech) **or** streaming (STT→agent→TTS), camera/screen vision, the avatar
+driver cues (expression / visemes / show-to-caller), group-call etiquette, DTMF,
+bilingual EN/AR, meeting recap/minutes, and SharePoint (OneDrive) file send.
 
 ## Install on Hermes
 
-The package must go into the **same Python environment as Hermes** (Hermes discovers
-it via the `hermes_agent.plugins` entry-point, then imports it in-process). Pick one:
+Install into the **same Python environment as Hermes** — it discovers the plugin via
+the `hermes_agent.plugins` entry-point and imports it in-process. Target the python
+that runs `hermes` (Linux/macOS `…/venv/bin/python`, Windows `…\venv\Scripts\python.exe`),
+or activate that venv first and drop `--python`.
 
-**A — from GitHub (recommended while not on PyPI):**
+**A — from PyPI (recommended):**
 
 ```bash
-# into the Hermes environment — use the python that runs `hermes`
-# (Linux/macOS: …/venv/bin/python · Windows: …\venv\Scripts\python.exe)
+uv pip install --python /path/to/hermes/venv/bin/python hermes-plugin-teams-voice
+# or, with the Hermes venv activated:  pip install hermes-plugin-teams-voice
+```
+
+**B — from GitHub (latest / pre-release):**
+
+```bash
 uv pip install --python /path/to/hermes/venv/bin/python \
   "git+https://github.com/alaamh/hermes-plugin-teams-voice.git"
 ```
 
-**B — from a local checkout:**
+**C — from a local checkout (development):**
 
 ```bash
 git clone https://github.com/alaamh/hermes-plugin-teams-voice.git
-uv pip install --python /path/to/hermes/venv/bin/python ./hermes-plugin-teams-voice
+uv pip install --python /path/to/hermes/venv/bin/python -e ./hermes-plugin-teams-voice
 ```
 
-**C — from PyPI (once published):**
+> Installing into the wrong environment means Hermes won't see the plugin.
+> Faster audio (optional): add the `numpy` extra, e.g. `hermes-plugin-teams-voice[numpy]`.
+
+## Enable + run
 
 ```bash
-uv pip install hermes-plugin-teams-voice          # or: pip install hermes-plugin-teams-voice
+hermes plugins list                            # confirm: teams_voice   (source: entrypoint)
+hermes plugins enable teams_voice              # entry-point plugins are opt-in
+hermes teams-voice serve --handler realtime    # voice bridge; also: streaming | echo | logging
+hermes gateway run                             # (separately) the Teams chat plane + cron
 ```
 
-> Finding the Hermes venv: it's the interpreter behind the `hermes` launcher —
-> `…/hermes/venv/bin/python` on Linux/macOS, `…\hermes\venv\Scripts\python.exe` on
-> Windows. Installing into the wrong environment means Hermes won't see the plugin.
-> (Or just activate that venv and run `uv pip install …` / `pip install …` without `--python`.)
-> Optional faster audio path: append `[numpy]` to any of the specs above.
-
-### Enable + run
-
-```bash
-hermes plugins list                       # confirm: teams_voice   (source: entrypoint)
-hermes plugins enable teams_voice         # entry-point plugins are opt-in
-hermes teams-voice serve --handler realtime   # voice bridge; also: streaming | echo | logging
-hermes gateway run                        # (separately) the Teams chat plane + cron
-```
-
-### Configure
+## Configure
 
 Config lives in Hermes's own files (not in this package):
 
-- `~/.hermes/config.yaml` → `plugins.entries.teams_voice.config` (host/port, `realtime:` block, `allowlist`, `meeting_recap`, `share_point_site_id`, …)
-- `~/.hermes/.env` → secrets (`TEAMS_VOICE_SHARED_SECRET`, `AZURE_FOUNDRY_API_KEY`, `TEAMS_SHAREPOINT_SITE_ID`, …)
+- `~/.hermes/config.yaml` → `plugins.entries.teams_voice.config` — `host`/`port` (voice WS), the `realtime:` block (OpenAI/Azure), `allowlist`, `meeting_recap`, `share_point_site_id`, …
+- `~/.hermes/.env` → secrets — `TEAMS_VOICE_SHARED_SECRET`, `AZURE_FOUNDRY_API_KEY`, `TEAMS_SHAREPOINT_SITE_ID`, …
 
-`shared_secret` **must equal** the companion media worker's shared secret. Full
-reference: [`hermes_teams_voice/README.md`](hermes_teams_voice/README.md).
+`shared_secret` **must equal** the media worker's shared secret. Full reference:
+[`hermes_teams_voice/README.md`](hermes_teams_voice/README.md).
 
-### Upgrade / uninstall
+## Upgrade / uninstall
 
 ```bash
-uv pip install --upgrade "git+https://github.com/alaamh/hermes-plugin-teams-voice.git"
-uv pip uninstall hermes-plugin-teams-voice    # then it disappears from `hermes plugins list`
+uv pip install --upgrade hermes-plugin-teams-voice
+uv pip uninstall hermes-plugin-teams-voice     # then it disappears from `hermes plugins list`
 ```
 
 ## How it loads
@@ -81,33 +79,24 @@ teams_voice = "hermes_teams_voice"
 
 Hermes imports `hermes_teams_voice` and calls its `register(ctx)` — registering the
 `teams-voice` CLI, the status tool, and the session hook. Entry-point plugins are
-opt-in, so add `teams_voice` to `plugins.enabled` (the `hermes plugins enable` command
-does this).
-
-## Configuration
-
-Config lives in Hermes's `config.yaml` (`plugins.entries.teams_voice.config`) and `.env`
-— identical to the bundled plugin. Key settings: `shared_secret` (must equal the worker's
-shared-secret), `host`/`port` (voice WS), the `realtime:` block (OpenAI/Azure), the
-caller `allowlist`, `meeting_recap`, and `TEAMS_SHAREPOINT_SITE_ID` for file/minutes
-attachment. See `hermes_teams_voice/README.md` for the full reference.
-
-## Relationship to the bundled plugin
-
-This is the same code as the in-tree `plugins/teams_voice` plugin, repackaged for pip
-distribution so you don't have to fork Hermes. Install it on **vanilla** Hermes; do not
-also keep a bundled `teams_voice` (same name → the entry-point would shadow it).
-
-- **Voice/CVI** works fully on vanilla Hermes.
-- **Chat-plane governance + SharePoint file attach** depend on the enhanced
-  `plugins/platforms/teams` adapter; when that isn't present the plugin **degrades
-  gracefully** (e.g. meeting minutes post as text instead of a SharePoint file card).
+opt-in, so `teams_voice` must be in `plugins.enabled` (`hermes plugins enable` does this).
 
 ## Requirements
 
 - A working **Hermes Agent** install (the host; not a PyPI package).
-- Python ≥ 3.10, `aiohttp`. `ffmpeg` on PATH for streaming-mode TTS decode.
-- A media worker that bridges the live Teams call audio/video into this plugin over the HMAC WebSocket (open-source worker — separate repo).
+- Python ≥ 3.10 and `aiohttp`; `ffmpeg` on PATH for streaming-mode TTS decode.
+- A media worker that bridges the live Teams call audio/video into this plugin over the HMAC WebSocket (open-source, separate repo).
+
+## Relationship to the bundled plugin
+
+This is the same code as the in-tree `plugins/teams_voice` plugin, repackaged for pip
+distribution so you don't have to fork Hermes. Install it on **vanilla** Hermes; don't
+also keep a bundled `teams_voice` (same name → the entry-point would shadow it).
+
+- **Voice/CVI** works fully on vanilla Hermes.
+- **Chat-plane governance + SharePoint file attach** depend on the enhanced
+  `plugins/platforms/teams` adapter; without it the plugin **degrades gracefully**
+  (e.g. meeting minutes post as text instead of a SharePoint file card).
 
 ## License
 
