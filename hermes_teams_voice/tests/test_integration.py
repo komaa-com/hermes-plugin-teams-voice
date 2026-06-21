@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import asyncio
 
+import pytest
+
 from hermes_teams_voice import handlers, meeting, protocol
 from hermes_teams_voice.config import resolve_config
 from hermes_teams_voice.realtime.openai_client import RealtimeConfig
@@ -122,7 +124,8 @@ def test_streaming_session_end_cancels_inflight_task():
 
 
 def test_streaming_vision_auto_attach(monkeypatch):
-    import agent.auxiliary_client as ac
+    # Needs the Hermes host (agent.auxiliary_client) — skipped on a standalone install.
+    ac = pytest.importorskip("agent.auxiliary_client")
 
     h = handlers.StreamingCallSessionHandler(bridge_config=resolve_config(extra={"shared_secret": "s"}))
     sess = FakeSession()
