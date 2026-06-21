@@ -1,5 +1,9 @@
 # hermes-plugin-teams-voice
 
+[![PyPI](https://img.shields.io/pypi/v/hermes-plugin-teams-voice.svg)](https://pypi.org/project/hermes-plugin-teams-voice/)
+[![Python](https://img.shields.io/pypi/pyversions/hermes-plugin-teams-voice.svg)](https://pypi.org/project/hermes-plugin-teams-voice/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Microsoft Teams **voice/video (Conversational Video Interface)** for **Hermes Agent**,
 packaged as a standalone, pip-installable plugin — install it *on top of* a normal
 Hermes install, no fork required.
