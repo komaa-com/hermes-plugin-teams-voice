@@ -18,8 +18,9 @@ it via the `hermes_agent.plugins` entry-point, then imports it in-process). Pick
 **A — from GitHub (recommended while not on PyPI):**
 
 ```bash
-# into the Hermes venv (uv example; use the python that runs `hermes`)
-uv pip install --python /path/to/hermes/venv/Scripts/python.exe \
+# into the Hermes environment — use the python that runs `hermes`
+# (Linux/macOS: …/venv/bin/python · Windows: …\venv\Scripts\python.exe)
+uv pip install --python /path/to/hermes/venv/bin/python \
   "git+https://github.com/alaamh/hermes-plugin-teams-voice.git"
 ```
 
@@ -27,7 +28,7 @@ uv pip install --python /path/to/hermes/venv/Scripts/python.exe \
 
 ```bash
 git clone https://github.com/alaamh/hermes-plugin-teams-voice.git
-uv pip install --python /path/to/hermes/venv/Scripts/python.exe ./hermes-plugin-teams-voice
+uv pip install --python /path/to/hermes/venv/bin/python ./hermes-plugin-teams-voice
 ```
 
 **C — from PyPI (once published):**
@@ -36,9 +37,10 @@ uv pip install --python /path/to/hermes/venv/Scripts/python.exe ./hermes-plugin-
 uv pip install hermes-plugin-teams-voice          # or: pip install hermes-plugin-teams-voice
 ```
 
-> Finding the Hermes venv: it's the interpreter behind the `hermes` launcher (on this
-> setup, `…\hermes\venv\Scripts\python.exe`). Installing into the wrong env means Hermes
-> won't see the plugin.
+> Finding the Hermes venv: it's the interpreter behind the `hermes` launcher —
+> `…/hermes/venv/bin/python` on Linux/macOS, `…\hermes\venv\Scripts\python.exe` on
+> Windows. Installing into the wrong environment means Hermes won't see the plugin.
+> (Or just activate that venv and run `uv pip install …` / `pip install …` without `--python`.)
 > Optional faster audio path: append `[numpy]` to any of the specs above.
 
 ### Enable + run
