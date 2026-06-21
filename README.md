@@ -104,9 +104,9 @@ also keep a bundled `teams_voice` (same name → the entry-point would shadow it
 ## Requirements
 
 - A working **Hermes Agent** install (the host; not a PyPI package).
-- The companion **Windows/.NET media worker** for live Teams call media.
 - Python ≥ 3.10, `aiohttp`. `ffmpeg` on PATH for streaming-mode TTS decode.
+- A media worker that bridges the live Teams call audio/video into this plugin over the HMAC WebSocket (open-source worker — separate repo).
 
 ## License
 
-MIT (matches Hermes Agent). Contributed by the team at PCFC — Dubai, UAE.
+MIT (matches Hermes Agent). Created by Alaaeldin Elhenawy — Dubai, UAE.

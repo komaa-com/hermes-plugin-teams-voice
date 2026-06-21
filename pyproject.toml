@@ -9,7 +9,7 @@ description = "Microsoft Teams voice/video (Conversational Video Interface) plug
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-authors = [{ name = "PCFC — Ports, Customs and Free Zone Corporation" }]
+authors = [{ name = "Alaaeldin Elhenawy", email = "alaamh@outlook.com" }]
 keywords = ["hermes", "hermes-agent", "microsoft-teams", "voice", "cvi", "plugin"]
 classifiers = [
   "Development Status :: 4 - Beta",
