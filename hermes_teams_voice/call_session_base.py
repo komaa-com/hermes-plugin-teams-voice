@@ -45,28 +45,7 @@ def _pending_pop(call_id: str) -> str | None:
     return entry[0] if entry else None
 
 
-class GreetingMixin:
-    """Shared greet-on-answer decision for both call handlers (fires once)."""
-
-    def _greeting_plan(self) -> tuple[str, str] | None:
-        """``('deliver', result)`` for an answered call-back, ``('greet', name)``
-        for a fresh inbound call, or ``None`` when there's nothing to say yet.
-
-        Rendered differently per handler (realtime: a ``request_say`` instruction;
-        streaming: literal TTS text), but the decision lives here once."""
-        if self._greeted:
-            return None
-        if self._outbound:
-            if not self._pending_greeting:
-                return None
-            payload, self._pending_greeting = self._pending_greeting, None
-            self._greeted = True
-            return ("deliver", payload)
-        self._greeted = True
-        return ("greet", self._first_name())
-
-
-class BaseTeamsCallHandler(CallSessionHandler, GreetingMixin):
+class BaseTeamsCallHandler(CallSessionHandler):
     """Common session policy shared by the realtime + streaming handlers."""
 
     def __init__(self, bridge_config: TeamsVoiceConfig | None = None) -> None:
@@ -89,6 +68,20 @@ class BaseTeamsCallHandler(CallSessionHandler, GreetingMixin):
     def _first_name(self) -> str:
         name = (self._caller.display_name if self._caller else "") or ""
         return name.strip().split(" ")[0] if name.strip() else ""
+
+    def _greeting_plan(self) -> tuple[str, str] | None:
+        """Greet-on-answer decision (fires once): ('deliver', result) for an
+        answered call-back, ('greet', name) for a fresh inbound call, or None."""
+        if self._greeted:
+            return None
+        if self._outbound:
+            if not self._pending_greeting:
+                return None
+            payload, self._pending_greeting = self._pending_greeting, None
+            self._greeted = True
+            return ("deliver", payload)
+        self._greeted = True
+        return ("greet", self._first_name())
 
     def _recording_ok(self, session: CallSession) -> bool:
         return (not self._require_recording) or session.recording_active

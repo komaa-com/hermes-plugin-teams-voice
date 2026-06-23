@@ -32,7 +32,7 @@ from .call_session_base import (
     _pending_pop,
     _pending_set,
 )
-from .call_tools import CallContext, CallToolRunner
+from .call_tools import CallToolRunner
 from .config import BYTES_PER_FRAME, FRAME_DURATION_MS, PCM_SAMPLE_RATE_HZ, TeamsVoiceConfig
 from .echo_guard import EchoGuard
 from .outbound import OutboundError, place_call
@@ -99,18 +99,10 @@ class RealtimeCallSessionHandler(BaseTeamsCallHandler):
 
     # ── lifecycle ────────────────────────────────────────────────────────────
 
-    def _tool_context(self) -> CallContext:
-        """Typed per-call context for the tool runner (references stable post-begin)."""
-        return CallContext(
-            bridge=self._bridge, session=self._session, caller=self._caller,
-            consult=self._consult, vision=self._vision, vision_budget=self._vision_budget,
-            meeting=self._meeting, thread_id=self._thread_id,
-        )
-
     async def on_session_start(self, session: CallSession, msg: protocol.SessionStart) -> None:
         if not await self._begin_session(session, msg):  # state + allowlist + scope
             return
-        self._tools = CallToolRunner(self._tool_context())
+        self._tools = CallToolRunner(self)
 
         rt = RealtimeSession(replace(self._cfg, instructions=self._build_instructions()))
         rt.tools = realtime_tools.default_tools()

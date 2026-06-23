@@ -16,6 +16,7 @@ graphemes map to a neutral-open shape (full parity is a follow-up — see TODO).
 from __future__ import annotations
 
 from dataclasses import dataclass
+from itertools import groupby
 
 # A representative subset of Azure viseme ids. The worker's ``ShapeForViseme``
 # maps the full 0-21 range; here we emit the ids the estimator can resolve from
@@ -97,13 +98,7 @@ def viseme_for_char(ch: str) -> int:
 
 def _collapse(marks: list[VisemeMark]) -> list[VisemeMark]:
     """Drop consecutive marks with the same viseme id (only emit changes)."""
-    out: list[VisemeMark] = []
-    last_id: int | None = None
-    for m in marks:
-        if m.viseme_id != last_id:
-            out.append(m)
-            last_id = m.viseme_id
-    return out
+    return [next(g) for _, g in groupby(marks, key=lambda m: m.viseme_id)]
 
 
 def estimate_visemes(text: str, duration_ms: int) -> list[VisemeMark]:
