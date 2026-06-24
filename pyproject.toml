@@ -9,7 +9,7 @@ description = "Microsoft Teams voice/video (Conversational Video Interface) plug
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-authors = [{ name = "Alaaeldin Elhenawy", email = "alaamh@outlook.com" }]
+authors = [{ name = "alaamh", email = "alaamh@outlook.com" }]
 keywords = ["hermes", "hermes-agent", "microsoft-teams", "voice", "cvi", "plugin"]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -29,9 +29,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/alaamh/hermes-plugin-teams-voice"
-Repository = "https://github.com/alaamh/hermes-plugin-teams-voice"
-Issues = "https://github.com/alaamh/hermes-plugin-teams-voice/issues"
+Homepage = "https://github.com/komaa-com/hermes-plugin-teams-voice"
+Repository = "https://github.com/komaa-com/hermes-plugin-teams-voice"
+Issues = "https://github.com/komaa-com/hermes-plugin-teams-voice/issues"
 
 [project.optional-dependencies]
 # Faster audio resampling (pure-Python fallback is used when absent).

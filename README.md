@@ -32,13 +32,13 @@ uv pip install --python /path/to/hermes/venv/bin/python hermes-plugin-teams-voic
 
 ```bash
 uv pip install --python /path/to/hermes/venv/bin/python \
-  "git+https://github.com/alaamh/hermes-plugin-teams-voice.git"
+  "git+https://github.com/komaa-com/hermes-plugin-teams-voice.git"
 ```
 
 **C — from a local checkout (development):**
 
 ```bash
-git clone https://github.com/alaamh/hermes-plugin-teams-voice.git
+git clone https://github.com/komaa-com/hermes-plugin-teams-voice.git
 uv pip install --python /path/to/hermes/venv/bin/python -e ./hermes-plugin-teams-voice
 ```
 
